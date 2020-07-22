@@ -7,6 +7,7 @@
 #include "Color.h"
 #include "Math/Transform.h"
 #include "Graphics/Shape.h"
+#include "Graphics/ParticleSystem.h"
 #include "Object/Actor.h"
 #include "Actors/Player.h"
 #include "Actors/Enemy.h"
@@ -16,8 +17,8 @@
 #include <list>
 #include <vector>
 
-std::list<nc::Actor*> actors;
 nc::Scene scene;
+nc::ParticleSystem particlesystem;
 
 float t{ 0 };
 
@@ -36,7 +37,7 @@ bool Update(float dt)// delta time (60 fps) (1/60 = 0.016)
 
 	}
 
-	scene.Update(dt);
+	
 
 	spawntimer += dt;
 
@@ -45,20 +46,20 @@ bool Update(float dt)// delta time (60 fps) (1/60 = 0.016)
 		spawntimer = 0.0f;
 
 		////add enemy to scene
-		//nc::Enemy* actor = new nc::Enemy;
-		//actor->Load("enemytr.txt");
-		//actor->SetTarget(scene.GetActor<nc::Player>());
-		//actor->GetTransform();
-		//actor->GetTransform().position = nc::Vector2{ nc::random(0,800), nc::random(0,600) };
-		//actor->SetThrust(nc::random(50, 100));
-		//scene.AddActor(actor);
+		nc::Enemy* actor = new nc::Enemy;
+		actor->Load("enemytr.txt");
+		actor->SetTarget(scene.GetActor<nc::Player>());
+		actor->GetTransform();
+		actor->GetTransform().position = nc::Vector2{ nc::random(0,800), nc::random(0,600) };
+		actor->SetThrust(nc::random(50, 100));
+		scene.AddActor(actor);
 	}
 
-	//for (nc::Actor* actor : actors)
-	//{
-	//	actor->Update(dt);
-	//}
+	nc::Player* player = scene.GetActor<nc::Player>();
+	particlesystem.Create(player->GetTransform().position, player->GetTransform().angle + nc::PI, 20, 1, nc::Color{1,1,1},1,100,200);
 
+	particlesystem.Update(dt);
+	scene.Update(dt);
 	return quit;
 }
 
@@ -71,15 +72,8 @@ void Draw(Core::Graphics& graphics)
 
 	nc::Color c = nc::Lerp(nc::Color{0,0,1}, nc::Color{1,0,0},v);
 	graphics.SetColor(c);
-	
-	//nc::Vector2 p = nc::Lerp(nc::Vector2{400,300}, nc::Vector2{100,100},v);
-	//graphics.DrawString(p.x,p.y,"Pew Pew Boi");
 
-	//for (nc::Actor* actor : actors)
-	//{
-	//	actor->Draw(graphics);
-	//}
-
+	particlesystem.Draw(graphics);
 	scene.Draw(graphics);
 
 }
@@ -87,6 +81,7 @@ void Draw(Core::Graphics& graphics)
 int main()
 {
 	scene.Startup();
+	particlesystem.Startup();
 
 
 	DWORD ticks = GetTickCount();
@@ -117,6 +112,7 @@ int main()
 	Core::Shutdown();
 
 	scene.Shutdown();
+	particlesystem.Shutdown();
 }
 
 
