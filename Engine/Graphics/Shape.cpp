@@ -36,9 +36,15 @@ bool nc::Shape::Load(const std::string& filename)
 		stream.close();
 	}
 
+	//get radius
+	for (size_t i = 0; i < m_points.size(); i++)
+	{
+		nc::Vector2 p1 = m_points[i];
+
+		float length = p1.Length();
+		if (length > m_radius) m_radius = length;
+	}
 	return success;
-
-
 }
 
 void nc::Shape::Draw(Core::Graphics& graphics, nc::Vector2 position, float scale, float angle)

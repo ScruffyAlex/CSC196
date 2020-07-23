@@ -4,6 +4,8 @@
 #include "Math/Random.h"
 #include "Math/Math.h"
 
+nc::ParticleSystem g_particleSystem;
+
 void nc::ParticleSystem::Startup()
 {
 	m_particles = new Particle[300];
@@ -22,12 +24,12 @@ void nc::ParticleSystem::Update(float dt)
 		Particle* p = &m_particles[i];
 		if (p->active)
 		{
-			p->lifetime = p->lifetime - dt;
+			p->lifetime -= dt;
 			p->active = (p->lifetime > 0);
-
 			p->prevPosition = p->position;
-			p->position = p->position + (p->velocity * dt);
-			p->velocity = p->velocity * p->damping;
+
+			p->position += p->velocity * dt;
+			p->velocity *= p->damping;
 
 		}
 	}
@@ -57,6 +59,7 @@ void nc::ParticleSystem::Create(const Vector2& position, float angle, float angl
 			p->active = true;
 			p->lifetime = lifetime;
 			p->position = position;
+			p->prevPosition = position;
 			p->color = color;
 
 			float angleRandom = nc::DegreesToRadians(nc::random(-angleRange, angleRange));

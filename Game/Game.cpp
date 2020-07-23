@@ -18,7 +18,6 @@
 #include <vector>
 
 nc::Scene scene;
-nc::ParticleSystem particlesystem;
 
 float t{ 0 };
 
@@ -55,10 +54,21 @@ bool Update(float dt)// delta time (60 fps) (1/60 = 0.016)
 		scene.AddActor(actor);
 	}
 
-	nc::Player* player = scene.GetActor<nc::Player>();
-	particlesystem.Create(player->GetTransform().position, player->GetTransform().angle + nc::PI, 20, 1, nc::Color{1,1,1},1,100,200);
 
-	particlesystem.Update(dt);
+	if (Core::Input::IsPressed(Core::Input::BUTTON_LEFT))
+	{
+		int x, y;
+		Core::Input::GetMousePos(x, y);
+
+		nc::Color colors[] = { nc::Color::white,nc::Color::blue,nc::Color::red};
+		nc::Color color = colors[rand() % 3];
+
+		g_particleSystem.Create(nc::Vector2{ x,y }, 0, 180, 30, color, 1, 100, 200);
+
+		
+	}
+
+	g_particleSystem.Update(dt);
 	scene.Update(dt);
 	return quit;
 }
@@ -73,7 +83,7 @@ void Draw(Core::Graphics& graphics)
 	nc::Color c = nc::Lerp(nc::Color{0,0,1}, nc::Color{1,0,0},v);
 	graphics.SetColor(c);
 
-	particlesystem.Draw(graphics);
+	g_particleSystem.Draw(graphics);
 	scene.Draw(graphics);
 
 }
@@ -81,7 +91,7 @@ void Draw(Core::Graphics& graphics)
 int main()
 {
 	scene.Startup();
-	particlesystem.Startup();
+	g_particleSystem.Startup();
 
 
 	DWORD ticks = GetTickCount();
@@ -112,7 +122,7 @@ int main()
 	Core::Shutdown();
 
 	scene.Shutdown();
-	particlesystem.Shutdown();
+	g_particleSystem.Shutdown();
 }
 
 

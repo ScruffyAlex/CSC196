@@ -1,8 +1,19 @@
 #include "pch.h"
 #include "Color.h"
 
+
+
+
 namespace nc 
 {
+
+	const Color nc::Color::white{ 1,1,1 };
+	const Color nc::Color::red{ 1,0,0 };
+	const Color nc::Color::green{ 0,1,0 };
+	const Color nc::Color::blue{ 0,0,1 };
+	const Color nc::Color::yellow{ 1,1,0 };
+	const Color nc::Color::purple{ 1,0,1 };
+
 
 	std::istream& nc::operator>>(std::istream& stream, Color& c)
 	{
